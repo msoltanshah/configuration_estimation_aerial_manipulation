@@ -1,0 +1,195 @@
+from keras.models import Sequential
+from keras.layers import Activation
+from keras.callbacks import EarlyStopping
+from keras.layers import Dense
+
+from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
+from keras.layers import Conv2D, MaxPooling2D
+from keras.layers import Activation, Dropout, Flatten, Dense
+
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import r2_score
+from keras import backend as K
+
+import numpy as np
+import argparse
+import cv2
+import os, os.path
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# ---- define metrics ----
+def coeff_determination(y_true, y_pred):
+    SS_res =  K.sum(K.square( y_true-y_pred ))
+    SS_tot = K.sum(K.square( y_true - K.mean(y_true) ) )
+    return ( 1 - SS_res/(SS_tot + K.epsilon()) )
+
+# ---- load data -------------------------------------------------------
+
+# path to training images
+train_path = 'train'
+
+# path to validation images
+test_path = 'test'
+
+# images to be resized to (image_dim) x (image_dim)
+image_dim = 250
+
+x_train = []
+y_train = []
+x_test = []
+y_test = []
+
+# path to csv files
+csvFile_train='output_train.csv'
+csvFile_test='output_test.csv'
+
+train_read=pd.read_csv(csvFile_train)
+test_read=pd.read_csv(csvFile_test)
+
+# load training data
+i_train = 0
+for filename in next(os.walk(train_path))[2]:
+        # full path is path to filename + '/' + filename
+        image = cv2.imread(''.join([train_path, '/', filename]))
+        # append resized image
+        x_train.append(cv2.resize(image, (image_dim, image_dim)))
+        # construct training output data
+        x_train_value=train_read['x'].values[i_train]
+        y_train_value=train_read['y'].values[i_train]
+        z_train_value=train_read['z'].values[i_train]
+        r_train_value=train_read['r'].values[i_train]
+        p_train_value=train_read['p'].values[i_train]
+        q_train_value=train_read['q'].values[i_train]
+        joint1_train_value=train_read['joint1'].values[i_train]
+        joint2_train_value=train_read['joint2'].values[i_train]
+        joint3_train_value=train_read['joint3'].values[i_train]
+        joint4_train_value=train_read['joint4'].values[i_train]
+        y_train_vector = [x_train_value, y_train_value, z_train_value, r_train_value, p_train_value, q_train_value, joint1_train_value, joint2_train_value, joint3_train_value, joint4_train_value]
+        y_train.append(y_train_vector)
+        i_train=i_train+1
+
+# load test data
+i_test = 0
+for filename in next(os.walk(test_path))[2]:
+        # full path is path to filename + '/' + filename
+        image = cv2.imread(''.join([test_path, '/', filename]))
+        # append resized image
+        x_test.append(cv2.resize(image, (image_dim, image_dim)))
+        # construct test output data
+        x_test_value=test_read['x'].values[i_test]
+        y_test_value=test_read['y'].values[i_test]
+        z_test_value=test_read['z'].values[i_test]
+        r_test_value=test_read['r'].values[i_test]
+        p_test_value=test_read['p'].values[i_test]
+        q_test_value=test_read['q'].values[i_test]
+        joint1_test_value=test_read['joint1'].values[i_test]
+        joint2_test_value=test_read['joint2'].values[i_test]
+        joint3_test_value=test_read['joint3'].values[i_test]
+        joint4_test_value=test_read['joint4'].values[i_test]
+        y_test_vector = [x_test_value, y_test_value, z_test_value, r_test_value, p_test_value, q_test_value, joint1_test_value, joint2_test_value, joint3_test_value, joint4_test_value]
+        y_test.append(y_test_vector)
+        i_test=i_test+1  
+
+# convert data to NumPy array of floats
+x_train = np.array(x_train, np.float32)
+x_test = np.array(x_test, np.float32)
+
+# ---- define data generator ----------------------------------------
+datagen = ImageDataGenerator(
+        rotation_range=10, # rotation
+        width_shift_range=0.2, # horizontal shift
+        height_shift_range=0.2, # vertical shift
+        zoom_range=0.2, # zoom
+        horizontal_flip=True, # horizontal flip
+        brightness_range=[0.2,1.2]) # brightness
+datagen.fit(x_train)
+
+# ---- define early stopping ----------------------------------------
+callback = EarlyStopping(
+    monitor="val_loss",
+    min_delta=0.001,
+    patience=50,
+    verbose=0,
+    mode="auto",
+    baseline=None,
+    restore_best_weights=True,
+)
+
+# ---- create model --------------------------------------------------
+
+# ---- Network 
+model = Sequential()
+model.add(Conv2D(64, (5, 5), input_shape=(image_dim, image_dim, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Conv2D(128, (5, 5)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+model.add(Conv2D(256, (5, 5)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+model.add(Conv2D(512, (5, 5)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+model.add(Conv2D(1024, (3, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+model.add(Flatten())  # this produces a 1D feature vector
+model.add(Dense(32))
+model.add(Activation('relu'))
+model.add(Dropout(0.5))
+model.add(Dense(16, kernel_initializer='normal', activation='relu'))
+model.add(Dropout(0.5))
+model.add(Dense(10, input_dim=10, kernel_initializer='normal', activation='selu'))
+
+# ---- compile model -------------------------------------------------------------------
+model.compile(loss='mean_squared_error', optimizer='adam', metrics=[coeff_determination])
+
+# ---- model summary -------------------------------------------------------------------
+model.summary()
+
+# ---- train the model --------------------------------------------------------------------
+batch_size = 10
+num_epochs = 300
+
+print("Fit model on training data")
+
+history = model.fit(datagen.flow(x_train, y_train, batch_size=batch_size),
+                    epochs=num_epochs,validation_data=datagen.flow(x_test, y_test, batch_size=batch_size), callbacks=[callback])
+
+# ---- model evaluation -----------------------------------------------------
+print("Predict model on test data")
+pred_test= model.predict(x_test)
+print(mean_squared_error(y_test,pred_test)) 
+
+
+# ---- save the model and the weights ---------------------------------------
+model.save('regression_early_stopping_1.h5')
+model.save_weights('regression_early_stopping_1_weights.h5')
+print('model saved')
+
+
+# ---- display history ------------------------------------------------------
+# list all data in history
+print(history.history.keys())
+# # summarize history for mean_squared_error
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.ylabel('Mean Squared Error')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper right')
+plt.show()
+plt.clf() # clear figure
+# summarize history for loss (mean_squared_error)
+plt.plot(history.history['coeff_determination'])
+plt.plot(history.history['val_coeff_determination'])
+plt.ylabel('R Squared')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='lower right')
+plt.show()
+# plt.clf()
