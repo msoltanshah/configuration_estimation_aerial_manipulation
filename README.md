@@ -80,4 +80,76 @@ In this project, a convolutional neural network (CNN) architecture is designed w
 
 The network is implemented using Keras, a Python-based deep learning API. It is compiled with mean squared error (MSE) as the loss function, the Adam optimizer, and the coefficient of determination (R²) as an evaluation metric. To enhance model performance, data augmentation techniques such as rotation, shifting, zooming, flipping, and brightness adjustments are applied to the training images. Additionally, early stopping is employed to prevent overfitting, with validation loss as the monitored metric, a minimum improvement threshold (min_delta) of 0.001, and a patience level of 50 epochs.
 
+<div style="text-align: center;">
+  <img src="network_architecture.png" alt="A* Pathplanning Visualization" width="500"/>
+</div>
+
+## Model Prediction
+
+The following model prediction shows an example of network efficiency in estimating the configuration for a randomly selected eye-in-hand RGB image.
+
+<div style="text-align: center;">
+  <img src="random_image_from_test_data.png" alt="A* Pathplanning Visualization" width="500"/>
+</div>
+
+<div style="text-align: center;">
+  <img src="model_prediction.png" alt="A* Pathplanning Visualization" width="500"/>
+</div>
+
+## What Network Learned
+
+Visualizing the input images that maximize the activation of a target convolutional layer provides insights into what the network has learned. The following pictures illustrate these images for the first 64 filters across different layers.
+
+In the first convolutional layer, activations are maximized by nearly plain colors, some of which correspond to colors in the sample environment. As we progress to deeper layers, the patterns become more complex. By the second layer, some patterns resemble QR code-like structures, though not conclusively.
+
+In the third layer, distinct color associations with the cylindrical LED object emerge, with green appearing prominently in most activations. The fourth layer demonstrates grid-like patterns reflecting two key environmental features: QR-code structures and the carpet on the ground. The dominant colors range from pink to purple, resembling the carpet’s texture.
+
+Finally, the fifth layer reveals clearer learning of the QR-code’s square frame—either fully visible or partially depicted—and the cylindrical green object. While learning the QR-code frame is not ideal, it may contribute to the network's effective regression performance.
+
+Input images that maximize the output of the first 64 filters of 1st convolutional layer:
+
+<div style="text-align: center;">
+  <img src="layer1.png" alt="A* Pathplanning Visualization" width="500"/>
+</div>
+
+Input images that maximize the output of the first 64 filters of 2nd convolutional layer:
+
+<div style="text-align: center;">
+  <img src="layer2.png" alt="A* Pathplanning Visualization" width="500"/>
+</div>
+
+Input images that maximize the output of the first 64 filters of 3rd convolutional layer:
+
+<div style="text-align: center;">
+  <img src="layer3.png" alt="A* Pathplanning Visualization" width="500"/>
+</div>
+
+Input images that maximize the output of the first 64 filters of 4th convolutional layer:
+
+<div style="text-align: center;">
+  <img src="layer4.png" alt="A* Pathplanning Visualization" width="500"/>
+</div>
+
+Input images that maximize the output of the first 64 filters of 5th convolutional layer:
+
+<div style="text-align: center;">
+  <img src="layer5.png" alt="A* Pathplanning Visualization" width="500"/>
+</div>
+
+## Discussion
+
+- Compared to many similar problems, the number of available data was limited in this project (540 data for training and 66 data for the test), which is equivalent to 2 minutes of operation of the aerial manipulation system in the designed environment.
+- Network has to be used only under the following circumstances:
+  - The AM platform is hovering in place while the arm could stretch out to servo the target. Performing other maneuvering flights may cause failure to have a low-error regression.
+    
+  - The green cylinder and probably the QR-code pattern are in the environment.
+    
+  - The surroundings may include light beams and shadows.
+    
+  - There could be other objects, such as boxes, windows, walls, and carpets, in the environment.
+  
+
+
+
+
 
