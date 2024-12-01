@@ -104,7 +104,7 @@ In the first convolutional layer, activations are maximized by nearly plain colo
 
 In the third layer, distinct color associations with the cylindrical LED object emerge, with green appearing prominently in most activations. The fourth layer demonstrates grid-like patterns reflecting two key environmental features: QR-code structures and the carpet on the ground. The dominant colors range from pink to purple, resembling the carpet’s texture.
 
-Finally, the fifth layer reveals clearer learning of the QR-code’s square frame—either fully visible or partially depicted—and the cylindrical green object. While learning the QR-code frame is not ideal, it may contribute to the network's effective regression performance.
+Finally, the fifth layer reveals clearer learning of the QR-code’s square frame—either fully visible or partially depicted—and the cylindrical green object, which may contribute to the network's effective regression performance.
 
 Input images that maximize the output of the first 64 filters of 1st convolutional layer:
 
