@@ -1,4 +1,4 @@
-# Aerial Manipulation Configuration Estimation Using RGB Images
+# Aerial Manipulation Configuration Estimation Using RGB Images and Keras API
 
 Aerial manipulation (AM) systems often face challenges with uncertainty and errors in estimating their configuration, specifically the pose of the UAV and its manipulator arm. This project aims to train an aerial robot to estimate its pose autonomously using only RGB images. The setup involves the robot hovering near a highlighted cylindrical object, utilizing an eye-to-hand camera for QR code tracking and an eye-in-hand camera for generating RGB data.
 
