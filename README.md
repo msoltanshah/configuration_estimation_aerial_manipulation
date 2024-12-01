@@ -7,7 +7,7 @@ This repository provides tools and models for configuration estimation in aerial
 The following picture shows the AM in the Gazebo simulator, with both eye-to-hand and eye-in-hand RGB images.
 
 <div style="text-align: center;">
-  <img src="data_generation_gazebo.png" alt="A* Pathplanning Visualization" width="700"/>
+  <img src="figures/data_generation_gazebo.png" alt="gazebo" width="700"/>
 </div>
 
 ## Features
@@ -81,7 +81,7 @@ In this project, a convolutional neural network (CNN) architecture is designed w
 The network is implemented using Keras, a Python-based deep learning API. It is compiled with mean squared error (MSE) as the loss function, the Adam optimizer, and the coefficient of determination (R²) as an evaluation metric. To enhance model performance, data augmentation techniques such as rotation, shifting, zooming, flipping, and brightness adjustments are applied to the training images. Additionally, early stopping is employed to prevent overfitting, with validation loss as the monitored metric, a minimum improvement threshold (min_delta) of 0.001, and a patience level of 50 epochs.
 
 <div style="text-align: center;">
-  <img src="network_architecture.png" alt="A* Pathplanning Visualization" width="500"/>
+  <img src="figures/network_architecture.png" alt="network" width="500"/>
 </div>
 
 ## Model Prediction
@@ -89,11 +89,11 @@ The network is implemented using Keras, a Python-based deep learning API. It is 
 The following model prediction shows an example of network efficiency in estimating the configuration for a randomly selected eye-in-hand RGB image.
 
 <div style="text-align: center;">
-  <img src="random_image_from_test_data.png" alt="A* Pathplanning Visualization" width="500"/>
+  <img src="figures/random_image_from_test_data.png" alt="random_data" width="500"/>
 </div>
 
 <div style="text-align: center;">
-  <img src="model_prediction.png" alt="A* Pathplanning Visualization" width="500"/>
+  <img src="figures/model_prediction.png" alt="model_prediction" width="500"/>
 </div>
 
 ## What Network Learned
@@ -109,31 +109,31 @@ Finally, the fifth layer reveals clearer learning of the QR-code’s square fram
 Input images that maximize the output of the first 64 filters of 1st convolutional layer:
 
 <div style="text-align: center;">
-  <img src="layer1.png" alt="A* Pathplanning Visualization" width="500"/>
+  <img src="figures/layer1.png" alt="layer1" width="500"/>
 </div>
 
 Input images that maximize the output of the first 64 filters of 2nd convolutional layer:
 
 <div style="text-align: center;">
-  <img src="layer2.png" alt="A* Pathplanning Visualization" width="500"/>
+  <img src="figures/layer2.png" alt="layer2" width="500"/>
 </div>
 
 Input images that maximize the output of the first 64 filters of 3rd convolutional layer:
 
 <div style="text-align: center;">
-  <img src="layer3.png" alt="A* Pathplanning Visualization" width="500"/>
+  <img src="figures/layer3.png" alt="layer3" width="500"/>
 </div>
 
 Input images that maximize the output of the first 64 filters of 4th convolutional layer:
 
 <div style="text-align: center;">
-  <img src="layer4.png" alt="A* Pathplanning Visualization" width="500"/>
+  <img src="figures/layer4.png" alt="layer4" width="500"/>
 </div>
 
 Input images that maximize the output of the first 64 filters of 5th convolutional layer:
 
 <div style="text-align: center;">
-  <img src="layer5.png" alt="A* Pathplanning Visualization" width="500"/>
+  <img src="figures/layer5.png" alt="layer5" width="500"/>
 </div>
 
 ## Discussion
@@ -142,7 +142,7 @@ Input images that maximize the output of the first 64 filters of 5th convolution
 - Network has to be used only under the following circumstances:
   - The AM platform is hovering in place while the arm could stretch out to servo the target. Performing other maneuvering flights may cause failure to have a low-error regression.
     
-  - The green cylinder and probably the QR-code pattern are in the environment.
+  - The green cylinder and the QR-code pattern are in the environment.
     
   - The surroundings may include light beams and shadows.
     
